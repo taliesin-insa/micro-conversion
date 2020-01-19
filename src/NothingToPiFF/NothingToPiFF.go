@@ -14,7 +14,6 @@ import (
 type Meta struct {
 	Type string
 	URL  string
-	Id   int
 }
 
 type Location struct {
@@ -32,7 +31,7 @@ type Data struct {
 
 type PiFFStruct struct {
 	Meta     Meta
-	Location Location
+	Location []Location
 	Data     []Data
 	Children []int
 	Parent   int
@@ -40,6 +39,7 @@ type PiFFStruct struct {
 
 type ConversionError struct {
 	URL         string
+	Type        error
 	Description string
 }
 
@@ -47,25 +47,6 @@ type PiFFList struct {
 	List   []PiFFStruct
 	Errors []ConversionError
 }
-
-//OpenFile fail
-//readFile fail
-
-//func main() {
-//	if len(os.Args) != 2 {
-//		fmt.Println("Usage: go run NothingToPiFF.go filePath")
-//		os.Exit(1)
-//	}
-//
-//	resultJson := convertListToPiFF(os.Args[1])
-//	var piFFList PiFFList
-//	err := json.Unmarshal(resultJson, &piFFList)
-//	checkError(err)
-//
-//	for _, piFFFile := range piFFList.List {
-//		fmt.Println(string(piFFFile))
-//	}
-//}
 
 func convertListToPiFF(filePath string) []byte {
 	// initialization of returned variables
@@ -77,6 +58,7 @@ func convertListToPiFF(filePath string) []byte {
 	if err != nil {
 		listOfErrors = append(listOfErrors, ConversionError{
 			URL:         filePath,
+			Type:        err,
 			Description: err.Error(),
 		})
 	}
@@ -92,6 +74,7 @@ func convertListToPiFF(filePath string) []byte {
 		if err != nil {
 			listOfErrors = append(listOfErrors, ConversionError{
 				URL:         filePath,
+				Type:        err,
 				Description: err.Error(),
 			})
 		} else {
@@ -112,10 +95,6 @@ func convertListToPiFF(filePath string) []byte {
 
 // Fill struct, convert to json and write in file
 func createPiFF(imagePath string) (PiFFStruct, error) {
-	// get name of image
-	segments := strings.Split(imagePath, "/")
-	imageName := segments[len(segments)-1]
-
 	// get dimensions of image
 	height, width, err := getDimensions(imagePath)
 	if err != nil {
@@ -126,18 +105,18 @@ func createPiFF(imagePath string) (PiFFStruct, error) {
 	PiFFData := PiFFStruct{
 		Meta: Meta{
 			Type: "line",
-			URL:  imageName,
-			Id:   0,
+			URL:  imagePath,
 		},
-		Location: Location{
-			Type: "line",
-			Polygon: [][2]int{
-				{0, 0},
-				{height, 0},
-				{height, width},
-				{0, width},
+		Location: []Location{
+			{Type: "line",
+				Polygon: [][2]int{
+					{0, 0},
+					{height, 0},
+					{height, width},
+					{0, width},
+				},
+				Id: "loc_0",
 			},
-			Id: "loc_0",
 		},
 		Data: []Data{
 			{

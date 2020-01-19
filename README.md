@@ -1,5 +1,6 @@
 # Conversion from nothing
-Microservice of conversion from nothing (only images) developed with Go
+Microservice of conversion developed with Go:
+* from nothing (only images)
 
 ## Commits
 

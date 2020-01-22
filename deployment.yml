@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: conversion
+  namespace: gitlab-managed-apps
+  labels:
+    app: conversion
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: conversion
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 33%
+  template:
+    metadata:
+      labels:
+        app: conversion
+    spec:
+      containers:
+        - name: conversion
+          image: clyde.local:5005/taliesin/micro-conversion/master
+          ports:
+            - containerPort: 12345

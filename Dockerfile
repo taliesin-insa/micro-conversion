@@ -27,7 +27,7 @@ COPY . .
 
 # Define directory
 ADD src /src
-WORKDIR /src/NothingToPiFF
+WORKDIR /src/Conversion
 
 # Download dependancies (if you try to build your image without following lines you will see missing packages)
 RUN go get -u github.com/gorilla/mux
@@ -48,7 +48,7 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 
 # Copy on the executive env
- COPY --from=builder /src/NothingToPiFF/ .
+ COPY --from=builder /src/Conversion/ .
 
 # Command to run the executable
 CMD ["./main"]

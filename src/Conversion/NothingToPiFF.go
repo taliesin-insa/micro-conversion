@@ -6,10 +6,12 @@ import (
 	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
-	"io/ioutil"
 	"os"
-	"strings"
 )
+
+type RequestDataNothing struct {
+	Images []string
+}
 
 type Meta struct {
 	Type string
@@ -48,32 +50,17 @@ type PiFFList struct {
 	Errors []ConversionError
 }
 
-func convertListToPiFF(filePath string) []byte {
+func convertListToPiFF(imagesPath []string) []byte {
 	// initialization of returned variables
 	var listOfPiFF []PiFFStruct
 	var listOfErrors []ConversionError
 
-	// open the file
-	dataByte, err := ioutil.ReadFile(filePath)
-	if err != nil {
-		listOfErrors = append(listOfErrors, ConversionError{
-			URL:         filePath,
-			Type:        err,
-			Description: err.Error(),
-		})
-	}
-
-	// get the list of images to convert
-	data := string(dataByte)
-	nameOfImages := strings.Split(data, "\n")
-	nameOfImages = nameOfImages[:len(nameOfImages)-1]
-
 	// create piFF for each image
-	for _, im := range nameOfImages {
+	for i, im := range imagesPath {
 		piFF, err := createPiFF(im)
 		if err != nil {
 			listOfErrors = append(listOfErrors, ConversionError{
-				URL:         filePath,
+				URL:         imagesPath[i],
 				Type:        err,
 				Description: err.Error(),
 			})

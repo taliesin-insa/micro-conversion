@@ -9,10 +9,6 @@ import (
 	"net/http"
 )
 
-type RequestData struct {
-	FilePath string
-}
-
 func generatePiFF(w http.ResponseWriter, r *http.Request) {
 	// get request body
 	reqBody, err := ioutil.ReadAll(r.Body)
@@ -22,16 +18,16 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// converts body to json
-	var reqData RequestData
+	var reqData RequestDataNothing
 	err = json.Unmarshal(reqBody, &reqData)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		_, err = w.Write([]byte("Wrong request body format: this microservice needs a JSON which attribute 'FilePath' is a string"))
+		_, err = w.Write([]byte("Wrong request body format: this microservice needs a JSON which attribute 'Images' is an array of string"))
 		return
 	}
 
 	// get PiFF list
-	result := convertListToPiFF(reqData.FilePath)
+	result := convertListToPiFF(reqData.Images)
 
 	// send answer
 	w.WriteHeader(http.StatusOK)

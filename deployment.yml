@@ -25,3 +25,11 @@ spec:
           image: clyde.local:5005/taliesin/micro-conversion/master
           ports:
             - containerPort: 12345
+          volumeMounts:
+            - mountPath: "/snippets/"
+              name: file-server
+      volumes:
+        - name: file-server
+          persistentVolumeClaim:
+            claimName: file-server-claim
+              

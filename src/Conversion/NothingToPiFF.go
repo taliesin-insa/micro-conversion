@@ -40,7 +40,7 @@ type PiFFStruct struct {
 }
 
 // Fill struct, convert to json and write in file
-func convertListToPiFF(imagePath string) ([]byte, error) {
+func convertFromNothingToPiFF(imagePath string) ([]byte, error) {
 	// get dimensions of image
 	height, width, err := getDimensions(imagePath)
 	if err != nil {

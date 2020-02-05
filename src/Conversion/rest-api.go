@@ -22,17 +22,24 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(reqBody, &reqData)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		_, err = w.Write([]byte("Wrong request body format: this microservice needs a JSON which attribute 'Images' is an array of string"))
+		_, err = w.Write([]byte("Wrong request body format: this microservice needs a JSON which attribute 'Path' is a string"))
+		checkError(err)
 		return
 	}
 
 	// get PiFF list
-	result := convertListToPiFF(reqData.Images)
+	result, err := convertListToPiFF(reqData.Path)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, err = w.Write([]byte(err.Error()))
+		checkError(err)
+		return
 
-	// send answer
-	w.WriteHeader(http.StatusOK)
-	_, err = w.Write(result)
-	checkError(err)
+	} else {
+		w.WriteHeader(http.StatusOK)
+		_, err = w.Write(result)
+		checkError(err)
+	}
 }
 
 // function to test whether docker file is correctly built

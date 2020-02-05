@@ -92,7 +92,7 @@ func createPiFF(imagePath string) (PiFFStruct, error) {
 	PiFFData := PiFFStruct{
 		Meta: Meta{
 			Type: "line",
-			URL:  imagePath,
+			URL:  "",
 		},
 		Location: []Location{
 			{Type: "line",

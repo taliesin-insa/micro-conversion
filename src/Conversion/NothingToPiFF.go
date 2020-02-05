@@ -10,7 +10,7 @@ import (
 )
 
 type RequestDataNothing struct {
-	Images []string
+	Path string
 }
 
 type Meta struct {
@@ -39,60 +39,19 @@ type PiFFStruct struct {
 	Parent   int
 }
 
-type ConversionError struct {
-	URL         string
-	Type        error
-	Description string
-}
-
-type PiFFList struct {
-	List   []PiFFStruct
-	Errors []ConversionError
-}
-
-func convertListToPiFF(imagesPath []string) []byte {
-	// initialization of returned variables
-	var listOfPiFF []PiFFStruct
-	var listOfErrors []ConversionError
-
-	// create piFF for each image
-	for i, im := range imagesPath {
-		piFF, err := createPiFF(im)
-		if err != nil {
-			listOfErrors = append(listOfErrors, ConversionError{
-				URL:         imagesPath[i],
-				Type:        err,
-				Description: err.Error(),
-			})
-		} else {
-			listOfPiFF = append(listOfPiFF, piFF)
-		}
-	}
-
-	// create the final Json to return
-	piFFList := PiFFList{
-		List:   listOfPiFF,
-		Errors: listOfErrors,
-	}
-	result, err := json.MarshalIndent(piFFList, "", "     ")
-	checkError(err)
-
-	return result
-}
-
 // Fill struct, convert to json and write in file
-func createPiFF(imagePath string) (PiFFStruct, error) {
+func convertFromNothingToPiFF(imagePath string) ([]byte, error) {
 	// get dimensions of image
 	height, width, err := getDimensions(imagePath)
 	if err != nil {
-		return PiFFStruct{}, err
+		return nil, err
 	}
 
 	// fill PiFF struct
 	PiFFData := PiFFStruct{
 		Meta: Meta{
 			Type: "line",
-			URL:  imagePath,
+			URL:  "",
 		},
 		Location: []Location{
 			{Type: "line",
@@ -115,7 +74,9 @@ func createPiFF(imagePath string) (PiFFStruct, error) {
 		},
 	}
 
-	return PiFFData, nil
+	result, err := json.MarshalIndent(PiFFData, "", "     ")
+	checkError(err)
+	return result, nil
 }
 
 // Extract width and height of the image

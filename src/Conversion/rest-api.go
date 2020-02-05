@@ -28,7 +28,7 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// get PiFF list
-	result, err := convertListToPiFF(reqData.Path)
+	result, err := convertFromNothingToPiFF(reqData.Path)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, err = w.Write([]byte(err.Error()))

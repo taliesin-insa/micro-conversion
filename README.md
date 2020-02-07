@@ -1,10 +1,49 @@
 # Conversion
 Microservice of conversion developed with Go:
-* from nothing (only images)
+* from nothing (only images) to PiFF
+
+### Exposed REST API
+#### From images only to PiFF :   
+**POST */convert/nothing***  
+
+**Request body**: a JSON with an only attribute "Path" representing the path of the image to convert  
+**Returned data**: a JSON representing the PiFF file 
+
+### PiFF structures
+
+```Go
+type Meta struct {
+	Type string
+	URL  string
+}
+```
+```Go
+type Location struct {
+	Type    string
+	Polygon [][2]int
+	Id      string
+}
+```
+```Go
+type Data struct {
+	Type       string
+	LocationId string
+	Value      string
+	Id         string
+}
+```
+```Go
+type PiFFStruct struct {
+	Meta     Meta
+	Location []Location
+	Data     []Data
+	Children []int
+	Parent   int
+}
+```
 
 ## Commits
-
-The title of a commit must follow this pattern : <type>(<scope>): <subject>
+The title of a commit must follow this pattern : \<type>(\<scope>): \<subject>
 
 ### Type
 Commits must specify their type among the following:

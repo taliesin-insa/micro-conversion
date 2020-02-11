@@ -7,7 +7,11 @@ Microservice of conversion developed with Go:
 **POST */convert/nothing***  
 
 **Request body**: a JSON with an only attribute "Path" representing the path of the image to convert  
-**Returned data**: a JSON representing the PiFF file 
+
+**Returned data**: 
+- no problem: 200 status and a JSON representing the PiFF file in body
+- wrong request body: 400 status and the requested data description in body
+- other error: 500 status and the error description in body
 
 ### PiFF structures
 

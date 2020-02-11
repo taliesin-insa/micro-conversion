@@ -75,7 +75,9 @@ func convertFromNothingToPiFF(imagePath string) ([]byte, error) {
 	}
 
 	result, err := json.MarshalIndent(PiFFData, "", "     ")
-	checkError(err)
+	if err != nil {
+		return nil, err
+	}
 	return result, nil
 }
 
@@ -87,18 +89,17 @@ func getDimensions(imagePath string) (int, int, error) {
 	}
 
 	image, _, err := image.DecodeConfig(file)
-	checkError(err)
+	if err != nil {
+		return 0, 0, err
+	}
+
 	width := image.Width
 	height := image.Height
 
-	checkError(file.Close())
+	err = file.Close()
+	if err != nil {
+		return 0, 0, err
+	}
 
 	return height, width, nil
-}
-
-// Check for unhandled errors
-func checkError(err error) {
-	if err != nil {
-		panic(err)
-	}
 }

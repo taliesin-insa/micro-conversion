@@ -13,7 +13,9 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 	// get request body
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		log.Fatal(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		fmt.Println(err.Error())
 		return
 	}
 
@@ -22,8 +24,7 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(reqBody, &reqData)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		_, err = w.Write([]byte("Wrong request body format: this microservice needs a JSON which attribute 'Path' is a string"))
-		checkError(err)
+		w.Write([]byte("Wrong request body format: this microservice needs a JSON which attribute 'Path' is a string"))
 		return
 	}
 
@@ -31,14 +32,13 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 	result, err := convertFromNothingToPiFF(reqData.Path)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		_, err = w.Write([]byte(err.Error()))
-		checkError(err)
+		w.Write([]byte(err.Error()))
+		fmt.Println(err.Error())
 		return
 
 	} else {
 		w.WriteHeader(http.StatusOK)
-		_, err = w.Write(result)
-		checkError(err)
+		w.Write(result)
 	}
 }
 

@@ -48,8 +48,9 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 	// get request body
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
+		errorPrefix := "[MICRO-CONVERSION] Read body: "
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		w.Write([]byte(errorPrefix + err.Error()))
 		return
 	}
 
@@ -57,23 +58,26 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 	var reqData RequestDataNothing
 	err = json.Unmarshal(reqBody, &reqData)
 	if err != nil {
+		errorPrefix := "[MICRO-CONVERSION] Unmarshal body: "
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		w.Write([]byte(errorPrefix + err.Error()))
 		return
 	}
 
 	// get dimensions of image
 	file, err := os.Open(reqData.Path)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		errorPrefix := "[MICRO-CONVERSION] Open image: "
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(errorPrefix + err.Error()))
 		return
 	}
 
 	image, _, err := image.DecodeConfig(file)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		errorPrefix := "[MICRO-CONVERSION] Read image: "
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(errorPrefix + err.Error()))
 		return
 	}
 
@@ -82,8 +86,9 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 
 	err = file.Close()
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		errorPrefix := "[MICRO-CONVERSION] Close image: "
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(errorPrefix + err.Error()))
 		return
 	}
 
@@ -116,8 +121,9 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 
 	result, err := json.MarshalIndent(PiFFData, "", "     ")
 	if err != nil {
+		errorPrefix := "[MICRO-CONVERSION] Marshal piFF: "
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		w.Write([]byte(errorPrefix + err.Error()))
 		fmt.Println(err.Error())
 		return
 	}

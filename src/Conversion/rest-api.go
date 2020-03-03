@@ -48,40 +48,38 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 	// get request body
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		errorPrefix := "[MICRO-CONVERSION] Read body: "
-		fmt.Println(errorPrefix + err.Error())
+		log.Printf("[ERROR] Read body: %v", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(errorPrefix + err.Error()))
+		w.Write([]byte("[MICRO-CONVERSION] Read body: " + err.Error()))
 		return
 	}
+
+	log.Printf("[BODY] %v", reqBody)
 
 	// converts body to json
 	var reqData RequestDataNothing
 	err = json.Unmarshal(reqBody, &reqData)
 	if err != nil {
-		errorPrefix := "[MICRO-CONVERSION] Unmarshal body: "
-		fmt.Println(errorPrefix + err.Error())
+		log.Printf("[ERROR] Unmarshal body: %v", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(errorPrefix + err.Error()))
+		w.Write([]byte("[MICRO-CONVERSION] Unmarshal body: " + err.Error()))
 		return
 	}
 
 	// get dimensions of image
 	file, err := os.Open(reqData.Path)
 	if err != nil {
-		errorPrefix := "[MICRO-CONVERSION] Open image: "
-		fmt.Println(errorPrefix + err.Error())
+		log.Printf("[ERROR] Open image: %v", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(errorPrefix + err.Error()))
+		w.Write([]byte("[MICRO-CONVERSION] Open image: " + err.Error()))
 		return
 	}
 
 	image, _, err := image.DecodeConfig(file)
 	if err != nil {
-		errorPrefix := "[MICRO-CONVERSION] Read image: "
-		fmt.Println(errorPrefix + err.Error())
+		log.Printf("[ERROR] Read image: %v", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(errorPrefix + err.Error()))
+		w.Write([]byte("[MICRO-CONVERSION] Read image: " + err.Error()))
 		return
 	}
 
@@ -90,10 +88,9 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 
 	err = file.Close()
 	if err != nil {
-		errorPrefix := "[MICRO-CONVERSION] Close image: "
-		fmt.Println(errorPrefix + err.Error())
+		log.Printf("[ERROR] Close image: %v", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(errorPrefix + err.Error()))
+		w.Write([]byte("[MICRO-CONVERSION] Close image: " + err.Error()))
 		return
 	}
 
@@ -126,10 +123,9 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 
 	result, err := json.MarshalIndent(PiFFData, "", "     ")
 	if err != nil {
-		errorPrefix := "[MICRO-CONVERSION] Marshal piFF: "
-		fmt.Println(errorPrefix + err.Error())
+		log.Printf("[ERROR] Marshal piFF: %v", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(errorPrefix + err.Error()))
+		w.Write([]byte("[MICRO-CONVERSION] Marshal piFF: " + err.Error()))
 		fmt.Println(err.Error())
 		return
 	}

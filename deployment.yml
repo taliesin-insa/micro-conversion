@@ -22,14 +22,55 @@ spec:
     spec:
       containers:
         - name: conversion
-          image: clyde.local:5005/taliesin/micro-conversion/master
+          image: clyde.local:5005/taliesin/micro-conversion/master:prod
           ports:
             - containerPort: 12345
           volumeMounts:
             - mountPath: "/snippets/"
               name: file-server
+          env:
+            - name: MICRO_ENVIRONMENT
+              value: "production"
       volumes:
         - name: file-server
           persistentVolumeClaim:
             claimName: file-server-claim
-              
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: conversion-dev
+  namespace: gitlab-managed-apps
+  labels:
+    app: conversion-dev
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: conversion-dev
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 33%
+  template:
+    metadata:
+      labels:
+        app: conversion-dev
+    spec:
+      containers:
+        - name: conversion-dev
+          image: clyde.local:5005/taliesin/micro-conversion/master:dev
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 12345
+          volumeMounts:
+            - mountPath: "/snippets/"
+              name: file-server-dev
+          env:
+            - name: MICRO_ENVIRONMENT
+              value: "dev"
+      volumes:
+        - name: file-server-dev
+          persistentVolumeClaim:
+            claimName: file-server-dev-claim

@@ -50,7 +50,7 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("[ERROR] Read body: %v", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("[MICRO-CONVERSION] Read body: " + err.Error()))
+		w.Write([]byte("[MICRO-CONVERSION] Couldn't read body"))
 		return
 	}
 
@@ -62,7 +62,7 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("[ERROR] Unmarshal body: %v", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("[MICRO-CONVERSION] Unmarshal body: " + err.Error()))
+		w.Write([]byte("[MICRO-CONVERSION] Couldn't unmarshal body"))
 		return
 	}
 
@@ -71,7 +71,7 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("[ERROR] Open image: %v", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("[MICRO-CONVERSION] Open image: " + err.Error()))
+		w.Write([]byte("[MICRO-CONVERSION] Couldn't open image"))
 		return
 	}
 
@@ -79,7 +79,7 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("[ERROR] Read image: %v", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("[MICRO-CONVERSION] Read image: " + err.Error()))
+		w.Write([]byte("[MICRO-CONVERSION] Couldn't read image"))
 		return
 	}
 
@@ -90,7 +90,7 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("[ERROR] Close image: %v", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("[MICRO-CONVERSION] Close image: " + err.Error()))
+		w.Write([]byte("[MICRO-CONVERSION] Couldn't close image"))
 		return
 	}
 
@@ -125,7 +125,7 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("[ERROR] Marshal piFF: %v", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("[MICRO-CONVERSION] Marshal piFF: " + err.Error()))
+		w.Write([]byte("[MICRO-CONVERSION] Couldn't marshal piFF"))
 		fmt.Println(err.Error())
 		return
 	}

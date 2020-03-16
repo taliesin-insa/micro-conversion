@@ -14,7 +14,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: conversion-dev-api
+  name: conversion-api-dev
   namespace: gitlab-managed-apps
 spec:
   selector:

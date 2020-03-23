@@ -30,7 +30,7 @@ test:
   stage: test
   image: golang:alpine
   script:
-    - cd src/${CI_PROJECT_NAME}
+    - cd src/Conversion
     - apk add --no-cache curl git
     - go get -d ./...
     - go test --cover -v

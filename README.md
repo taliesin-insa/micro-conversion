@@ -58,6 +58,7 @@ Commits must specify their type among the following:
 
 ### Scope
 Your commits name should also precise which part of the project they concern. You can do so by naming them using the following scopes:
+* General
 * Conversion
 * API
 * Configuration

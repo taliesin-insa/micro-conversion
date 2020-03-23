@@ -101,7 +101,7 @@ func TestGeneratePiFF(t *testing.T) {
 	}
 
 	// save temporary the image
-	imagePath := "/snippets/MICRO_CONVERSION_TMP.png"
+	imagePath := "./MICRO_CONVERSION_TMP.png"
 	f, err := os.Create(imagePath)
 	if err != nil {
 		t.Fatal(err)

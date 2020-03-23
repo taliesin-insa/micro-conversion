@@ -79,5 +79,31 @@ func TestGeneratePiFFUnknownImage(t *testing.T) {
 }
 
 func TestGeneratePiFF(t *testing.T) {
+	imagePath := RequestDataNothing{Path: "../../../image.jpg"}
+	imagePathJSON, err := json.Marshal(imagePath)
+	if err != nil {
+		t.Fatal(err)
+	}
 
+	request, err := http.NewRequest("POST", "/convert/nothing", bytes.NewBuffer(imagePathJSON))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	recorder := httptest.NewRecorder()
+	handler := http.HandlerFunc(generatePiFF)
+	handler.ServeHTTP(recorder, request)
+
+	if status := recorder.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	// converts body to json
+	var reqData PiFFStruct
+	err = json.Unmarshal(recorder.Body.Bytes(), &reqData)
+	if err != nil {
+		t.Errorf("handler returned wrong format body: got %v want piFF",
+			string(recorder.Body.Bytes()))
+	}
 }

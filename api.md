@@ -57,10 +57,10 @@ It will return a status 500 if an error occurs in the Go service. This can happe
         }
         ~~~
 
-+ Response 404 (text/plain)  
++ Response 400 (text/plain)  
 	+ Body  
 		~~~
-        [MICRO-CONVERSION] Couldn't read body
+        [MICRO-CONVERSION] {user-friendly error message}
         ~~~
 
 + Response 500 (text/plain)  

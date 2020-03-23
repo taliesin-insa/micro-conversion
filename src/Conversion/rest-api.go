@@ -45,6 +45,13 @@ type PiFFStruct struct {
 }
 
 func generatePiFF(w http.ResponseWriter, r *http.Request) {
+	if r.Body == nil {
+		log.Printf("[ERROR] Request body is null")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("[MICRO-CONVERSION] Request body is null"))
+		return
+	}
+
 	// get request body
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -70,7 +77,7 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 	file, err := os.Open(reqData.Path)
 	if err != nil {
 		log.Printf("[ERROR] Open image: %v", err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("[MICRO-CONVERSION] Couldn't open image"))
 		return
 	}

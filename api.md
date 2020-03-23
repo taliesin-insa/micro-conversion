@@ -18,8 +18,8 @@ This action returns a piFF file according to the image given in body.
 
 ### [POST]
 This action has 2 negative responses defined:  
-It will return a status 404 if a error occurs while converting the body to the appriopriate structure.  
-It will return a status 500 if an error occurs in the Go service. This can happen in the image opening or in the file writing.  
+It will return a status 400 if a error occurs while converting the body to the appropriate structure and opening the image.  
+It will return a status 500 if an error occurs in the Go service. This can happen in the file writing.  
 
 + Request (application/json)
 	+ Body

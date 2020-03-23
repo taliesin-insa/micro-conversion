@@ -3,7 +3,7 @@ API for the microservice converting different formats to anothers.
 For the moment, the only conversion possible is:
 * image ==> image + piFF file (the piFF file is created and returned, it's not really a conversion)
 
-## Home Link [/db]
+## Home Link [/]
 Simple method to test whether the Go API is runing correctly
 
 ### [GET]

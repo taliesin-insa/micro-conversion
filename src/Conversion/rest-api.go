@@ -61,8 +61,6 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("[BODY] %v", reqBody)
-
 	// converts body to json
 	var reqData RequestDataNothing
 	err = json.Unmarshal(reqBody, &reqData)

@@ -136,13 +136,13 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 
 // function to test whether docker file is correctly built
 func homeLink(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome home!")
+	fmt.Fprintf(w, "[MICRO-CONVERSION] Welcome home!")
 }
 
 func main() {
 	// Define the routing
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/convert/nothing", generatePiFF).Methods("POST")
-	router.HandleFunc("/", homeLink).Methods("GET")
+	router.HandleFunc("/convert", homeLink).Methods("GET")
 	log.Fatal(http.ListenAndServe(":12345", router))
 }

@@ -2,18 +2,11 @@
 Microservice of conversion developed with Go:
 * from nothing (only images) to PiFF
 
-### Exposed REST API
-#### From images only to PiFF :   
-**POST */convert/nothing***  
+## Exposed REST API
+See the API documentation in API Blueprint format [here](api.md)
 
-**Request body**: a JSON with an only attribute "Path" representing the path of the image to convert  
-
-**Returned data**: 
-- no problem: 200 status and a JSON representing the PiFF file in body
-- wrong request body: 400 status and the requested data description in body
-- other error: 500 status and the error description in body
-
-### PiFF structures
+## PiFF structures
+Here is the decomposition of the piFF structure used in this microservice:
 
 ```Go
 type Meta struct {
@@ -52,6 +45,7 @@ The title of a commit must follow this pattern : \<type>(\<scope>): \<subject>
 ### Type
 Commits must specify their type among the following:
 * **build**: changes that affect the build system or external dependencies
+* **debug**: a code change to debug (logs, etc.)
 * **docs**: documentation only changes
 * **feat**: a new feature
 * **fix**: a bug fix
@@ -64,6 +58,7 @@ Commits must specify their type among the following:
 
 ### Scope
 Your commits name should also precise which part of the project they concern. You can do so by naming them using the following scopes:
+* General
 * Conversion
 * API
 * Configuration

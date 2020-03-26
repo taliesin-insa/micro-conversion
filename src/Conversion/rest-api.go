@@ -126,7 +126,6 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 		log.Printf("[ERROR] Marshal piFF: %v", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("[MICRO-CONVERSION] Couldn't marshal piFF"))
-		fmt.Println(err.Error())
 		return
 	}
 

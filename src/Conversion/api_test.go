@@ -20,8 +20,7 @@ func TestGeneratePiFFNilBody(t *testing.T) {
 	}
 
 	recorder := httptest.NewRecorder()
-	handler := http.HandlerFunc(generatePiFF)
-	handler.ServeHTTP(recorder, request)
+	generatePiFF(recorder, request)
 
 	if status := recorder.Code; status != http.StatusBadRequest {
 		t.Errorf("handler returned wrong status code: got %v want %v",
@@ -42,8 +41,7 @@ func TestGeneratePiFFWrongBody(t *testing.T) {
 	}
 
 	recorder := httptest.NewRecorder()
-	handler := http.HandlerFunc(generatePiFF)
-	handler.ServeHTTP(recorder, request)
+	generatePiFF(recorder, request)
 
 	if status := recorder.Code; status != http.StatusBadRequest {
 		t.Errorf("handler returned wrong status code: got %v want %v",
@@ -69,8 +67,7 @@ func TestGeneratePiFFUnknownImage(t *testing.T) {
 	}
 
 	recorder := httptest.NewRecorder()
-	handler := http.HandlerFunc(generatePiFF)
-	handler.ServeHTTP(recorder, request)
+	generatePiFF(recorder, request)
 
 	if status := recorder.Code; status != http.StatusBadRequest {
 		t.Errorf("handler returned wrong status code: got %v want %v",
@@ -130,8 +127,7 @@ func TestGeneratePiFF(t *testing.T) {
 	}
 
 	recorder := httptest.NewRecorder()
-	handler := http.HandlerFunc(generatePiFF)
-	handler.ServeHTTP(recorder, request)
+	generatePiFF(recorder, request)
 
 	// status test
 	if status := recorder.Code; status != http.StatusOK {

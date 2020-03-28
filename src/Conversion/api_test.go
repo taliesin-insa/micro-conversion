@@ -16,19 +16,19 @@ import (
 func TestGeneratePiFFNilBody(t *testing.T) {
 	request, err := http.NewRequest("POST", "/convert/nothing", nil)
 	if err != nil {
-		t.Fatal(err)
+		t.Errorf("[TEST_ERROR] Create request: %v", err.Error())
 	}
 
 	recorder := httptest.NewRecorder()
 	generatePiFF(recorder, request)
 
 	if status := recorder.Code; status != http.StatusBadRequest {
-		t.Errorf("handler returned wrong status code: got %v want %v",
+		t.Errorf("[TEST_ERROR] Handler returned wrong status code: got %v want %v",
 			status, http.StatusBadRequest)
 	}
 
 	if message := string(recorder.Body.Bytes()); message != "[MICRO-CONVERSION] Request body is null" {
-		t.Errorf("handler returned wrong response body: got %v want %v",
+		t.Errorf("[TEST_ERROR] Handler returned wrong response body: got %v want %v",
 			message, "[MICRO-CONVERSION] Request body is null")
 	}
 
@@ -37,19 +37,19 @@ func TestGeneratePiFFNilBody(t *testing.T) {
 func TestGeneratePiFFWrongBody(t *testing.T) {
 	request, err := http.NewRequest("POST", "/convert/nothing", bytes.NewBuffer([]byte("Wrong body format")))
 	if err != nil {
-		t.Fatal(err)
+		t.Errorf("[TEST_ERROR] Create request: %v", err.Error())
 	}
 
 	recorder := httptest.NewRecorder()
 	generatePiFF(recorder, request)
 
 	if status := recorder.Code; status != http.StatusBadRequest {
-		t.Errorf("handler returned wrong status code: got %v want %v",
+		t.Errorf("[TEST_ERROR] Handler returned wrong status code: got %v want %v",
 			status, http.StatusBadRequest)
 	}
 
 	if message := string(recorder.Body.Bytes()); message != "[MICRO-CONVERSION] Couldn't unmarshal body" {
-		t.Errorf("handler returned wrong response body: got %v want %v",
+		t.Errorf("[TEST_ERROR] Handler returned wrong response body: got %v want %v",
 			message, "[MICRO-CONVERSION] Couldn't unmarshal body")
 	}
 }
@@ -58,24 +58,24 @@ func TestGeneratePiFFUnknownImage(t *testing.T) {
 	unknownImage := RequestDataNothing{Path: "unknown/image.png"}
 	unknownImageJSON, err := json.Marshal(unknownImage)
 	if err != nil {
-		t.Fatal(err)
+		t.Errorf("[TEST_ERROR] Marshal request body: %v", err.Error())
 	}
 
 	request, err := http.NewRequest("POST", "/convert/nothing", bytes.NewBuffer(unknownImageJSON))
 	if err != nil {
-		t.Fatal(err)
+		t.Errorf("[TEST_ERROR] Create request: %v", err.Error())
 	}
 
 	recorder := httptest.NewRecorder()
 	generatePiFF(recorder, request)
 
 	if status := recorder.Code; status != http.StatusBadRequest {
-		t.Errorf("handler returned wrong status code: got %v want %v",
+		t.Errorf("[TEST_ERROR] Handler returned wrong status code: got %v want %v",
 			status, http.StatusBadRequest)
 	}
 
 	if message := string(recorder.Body.Bytes()); message != "[MICRO-CONVERSION] Couldn't open image" {
-		t.Errorf("handler returned wrong response body: got %v want %v",
+		t.Errorf("[TEST_ERROR] Handler returned wrong response body: got %v want %v",
 			message, "[MICRO-CONVERSION] Couldn't open image")
 	}
 }
@@ -101,29 +101,29 @@ func TestGeneratePiFF(t *testing.T) {
 	imagePath := "./MICRO_CONVERSION_TMP.png"
 	f, err := os.Create(imagePath)
 	if err != nil {
-		t.Fatal(err)
+		t.Errorf("[TEST_ERROR] Create image: %v", err.Error())
 	}
 
 	err = png.Encode(f, image)
 	if err != nil {
 		f.Close()
-		t.Fatal(err)
+		t.Errorf("[TEST_ERROR] Encode image: %v", err.Error())
 	}
 
 	if f.Close() != nil {
-		t.Fatal(err)
+		t.Errorf("[TEST_ERROR] Close image: %v", err.Error())
 	}
 
 	// tests with this image
 	imageRequest := RequestDataNothing{Path: imagePath}
 	imageRequestJSON, err := json.Marshal(imageRequest)
 	if err != nil {
-		t.Fatal(err)
+		t.Errorf("[TEST_ERROR] Marshal request body: %v", err.Error())
 	}
 
 	request, err := http.NewRequest("POST", "/convert/nothing", bytes.NewBuffer(imageRequestJSON))
 	if err != nil {
-		t.Fatal(err)
+		t.Errorf("[TEST_ERROR] Create request: %v", err.Error())
 	}
 
 	recorder := httptest.NewRecorder()
@@ -131,7 +131,7 @@ func TestGeneratePiFF(t *testing.T) {
 
 	// status test
 	if status := recorder.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v",
+		t.Errorf("[TEST_ERROR] Handler returned wrong status code: got %v want %v",
 			status, http.StatusOK)
 	}
 
@@ -139,14 +139,14 @@ func TestGeneratePiFF(t *testing.T) {
 	var reqData PiFFStruct
 	err = json.Unmarshal(recorder.Body.Bytes(), &reqData)
 	if err != nil {
-		t.Errorf("handler returned wrong format body: got %v want piFF",
-			string(recorder.Body.Bytes()))
+		t.Errorf("[TEST_ERROR] Handler returned wrong format body (got %v): %v",
+			string(recorder.Body.Bytes()), err.Error())
 	}
 
 	// Location content test
 	locations := reqData.Location
 	if len(locations) != 1 {
-		t.Errorf("handler returned wrong body content (length of Location): got %v want %v",
+		t.Errorf("[TEST_ERROR] Handler returned wrong body content (length of Location): got %v want %v",
 			len(locations), 1)
 	}
 
@@ -158,13 +158,13 @@ func TestGeneratePiFF(t *testing.T) {
 		{0, width},
 	}
 	if !reflect.DeepEqual(dimensionsTest, dimensions) {
-		t.Errorf("handler returned wrong body content (content of Polygon): got %v want %v",
+		t.Errorf("[TEST_ERROR] Handler returned wrong body content (content of Polygon): got %v want %v",
 			dimensions, dimensionsTest)
 	}
 
 	// delete the useless image
 	err = os.Remove(imagePath)
 	if err != nil {
-		t.Fatal(err)
+		t.Errorf("[TEST_ERROR] Delete image: %v", err.Error())
 	}
 }

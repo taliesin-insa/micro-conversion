@@ -6,6 +6,7 @@ import (
 	"image"
 	"image/color"
 	"image/png"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -98,19 +99,19 @@ func TestGeneratePiFF(t *testing.T) {
 	}
 
 	// save temporary the image
-	imagePath := "./MICRO_CONVERSION_TMP.png"
-	f, err := os.Create(imagePath)
+	imageFile, err := ioutil.TempFile("", "MICRO_CONVERSION_TEST")
 	if err != nil {
 		t.Errorf("[TEST_ERROR] Create image: %v", err.Error())
 	}
+	imagePath := imageFile.Name()
 
-	err = png.Encode(f, image)
+	err = png.Encode(imageFile, image)
 	if err != nil {
-		f.Close()
+		imageFile.Close()
 		t.Errorf("[TEST_ERROR] Encode image: %v", err.Error())
 	}
 
-	if f.Close() != nil {
+	if imageFile.Close() != nil {
 		t.Errorf("[TEST_ERROR] Close image: %v", err.Error())
 	}
 

@@ -1,0 +1,31 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: conversion
+  namespace: gitlab-managed-apps
+  labels:
+    prometheus: k8s
+spec:
+  namespaceSelector:
+    any: true
+  selector:
+    matchLabels:
+      app: conversion
+  endpoints:
+    - port: api
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: conversion-dev
+  namespace: gitlab-managed-apps
+  labels:
+    prometheus: k8s
+spec:
+  namespaceSelector:
+    any: true
+  selector:
+    matchLabels:
+      app: conversion-dev
+  endpoints:
+  - port: api

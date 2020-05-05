@@ -33,7 +33,7 @@ spec:
               value: "production"
           resources:
             requests:
-              cpu: "250m"
+              cpu: "100m"
       volumes:
         - name: file-server
           persistentVolumeClaim:
@@ -75,7 +75,7 @@ spec:
               value: "dev"
           resources:
             requests:
-              cpu: "250m"
+              cpu: "75m"
       volumes:
         - name: file-server-dev
           persistentVolumeClaim:

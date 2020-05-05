@@ -31,6 +31,9 @@ spec:
           env:
             - name: MICRO_ENVIRONMENT
               value: "production"
+          resources:
+            requests:
+              cpu: "250m"
       volumes:
         - name: file-server
           persistentVolumeClaim:
@@ -70,6 +73,9 @@ spec:
           env:
             - name: MICRO_ENVIRONMENT
               value: "dev"
+          resources:
+            requests:
+              cpu: "250m"
       volumes:
         - name: file-server-dev
           persistentVolumeClaim:

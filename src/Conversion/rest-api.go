@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"image"
 	_ "image/gif"
 	_ "image/jpeg"
@@ -12,6 +15,13 @@ import (
 	"log"
 	"net/http"
 	"os"
+)
+
+var (
+	httpRequestsTotal = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "http_requests_total",
+		Help: "Number of HTTP requests processed by the microservice",
+	})
 )
 
 type RequestDataNothing struct {
@@ -45,6 +55,8 @@ type PiFFStruct struct {
 }
 
 func generatePiFF(w http.ResponseWriter, r *http.Request) {
+	httpRequestsTotal.Inc()
+
 	if r.Body == nil {
 		log.Printf("[ERROR] Request body is null")
 		w.WriteHeader(http.StatusBadRequest)
@@ -140,12 +152,18 @@ func generatePiFF(w http.ResponseWriter, r *http.Request) {
 
 // function to test whether docker file is correctly built
 func homeLink(w http.ResponseWriter, r *http.Request) {
+	httpRequestsTotal.Inc()
+
 	fmt.Fprintf(w, "[MICRO-CONVERSION] Welcome home!")
 }
 
 func main() {
 	// Define the routing
 	router := mux.NewRouter().StrictSlash(true)
+
+	// metrics route for monitoring
+	router.Path("/metrics").Handler(promhttp.Handler())
+
 	router.HandleFunc("/convert/nothing", generatePiFF).Methods("POST")
 	router.HandleFunc("/convert", homeLink).Methods("GET")
 	log.Fatal(http.ListenAndServe(":12345", router))

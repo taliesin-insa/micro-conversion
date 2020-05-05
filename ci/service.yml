@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: conversion-api
   namespace: gitlab-managed-apps
+  labels:
+    app: conversion
 spec:
   selector:
     app: conversion
@@ -17,6 +19,8 @@ kind: Service
 metadata:
   name: conversion-api-dev
   namespace: gitlab-managed-apps
+  labels:
+    app: conversion-dev
 spec:
   selector:
     app: conversion-dev

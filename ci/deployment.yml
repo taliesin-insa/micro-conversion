@@ -23,6 +23,7 @@ spec:
       containers:
         - name: conversion
           image: clyde.local:5005/taliesin/micro-conversion/master:prod
+          imagePullPolicy: Always
           ports:
             - containerPort: 12345
           volumeMounts:

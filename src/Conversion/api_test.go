@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/stretchr/testify/assert"
 	"image"
 	"image/color"
 	"image/png"
@@ -15,6 +16,8 @@ import (
 )
 
 func TestGeneratePiFFNilBody(t *testing.T) {
+	assert := assert.New(t)
+
 	request, err := http.NewRequest("POST", "/convert/nothing", nil)
 	if err != nil {
 		t.Errorf("[TEST_ERROR] Create request: %v", err.Error())
@@ -23,19 +26,14 @@ func TestGeneratePiFFNilBody(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	generatePiFF(recorder, request)
 
-	if status := recorder.Code; status != http.StatusBadRequest {
-		t.Errorf("[TEST_ERROR] Handler returned wrong status code: got %v want %v",
-			status, http.StatusBadRequest)
-	}
+	assert.Equal(http.StatusBadRequest, recorder.Code)
 
-	if message := string(recorder.Body.Bytes()); message != "[MICRO-CONVERSION] Request body is null" {
-		t.Errorf("[TEST_ERROR] Handler returned wrong response body: got %v want %v",
-			message, "[MICRO-CONVERSION] Request body is null")
-	}
-
+	assert.Equal("[MICRO-CONVERSION] Request body is null", string(recorder.Body.Bytes()))
 }
 
 func TestGeneratePiFFWrongBody(t *testing.T) {
+	assert := assert.New(t)
+
 	request, err := http.NewRequest("POST", "/convert/nothing", bytes.NewBuffer([]byte("Wrong body format")))
 	if err != nil {
 		t.Errorf("[TEST_ERROR] Create request: %v", err.Error())
@@ -44,18 +42,14 @@ func TestGeneratePiFFWrongBody(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	generatePiFF(recorder, request)
 
-	if status := recorder.Code; status != http.StatusBadRequest {
-		t.Errorf("[TEST_ERROR] Handler returned wrong status code: got %v want %v",
-			status, http.StatusBadRequest)
-	}
+	assert.Equal(http.StatusBadRequest, recorder.Code)
 
-	if message := string(recorder.Body.Bytes()); message != "[MICRO-CONVERSION] Couldn't unmarshal body" {
-		t.Errorf("[TEST_ERROR] Handler returned wrong response body: got %v want %v",
-			message, "[MICRO-CONVERSION] Couldn't unmarshal body")
-	}
+	assert.Equal("[MICRO-CONVERSION] Couldn't unmarshal body", string(recorder.Body.Bytes()))
 }
 
 func TestGeneratePiFFUnknownImage(t *testing.T) {
+	assert := assert.New(t)
+
 	unknownImage := RequestDataNothing{Path: "unknown/image.png"}
 	unknownImageJSON, err := json.Marshal(unknownImage)
 	if err != nil {
@@ -70,18 +64,14 @@ func TestGeneratePiFFUnknownImage(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	generatePiFF(recorder, request)
 
-	if status := recorder.Code; status != http.StatusBadRequest {
-		t.Errorf("[TEST_ERROR] Handler returned wrong status code: got %v want %v",
-			status, http.StatusBadRequest)
-	}
+	assert.Equal(http.StatusBadRequest, recorder.Code)
 
-	if message := string(recorder.Body.Bytes()); message != "[MICRO-CONVERSION] Couldn't open image" {
-		t.Errorf("[TEST_ERROR] Handler returned wrong response body: got %v want %v",
-			message, "[MICRO-CONVERSION] Couldn't open image")
-	}
+	assert.Equal("[MICRO-CONVERSION] Couldn't open image", string(recorder.Body.Bytes()))
 }
 
 func TestGeneratePiFF(t *testing.T) {
+	assert := assert.New(t)
+
 	// create an image for the test
 	width := 200
 	height := 100
@@ -131,25 +121,16 @@ func TestGeneratePiFF(t *testing.T) {
 	generatePiFF(recorder, request)
 
 	// status test
-	if status := recorder.Code; status != http.StatusOK {
-		t.Errorf("[TEST_ERROR] Handler returned wrong status code: got %v want %v",
-			status, http.StatusOK)
-	}
+	assert.Equal(http.StatusOK, recorder.Code)
 
 	// body format test
 	var reqData PiFFStruct
 	err = json.Unmarshal(recorder.Body.Bytes(), &reqData)
-	if err != nil {
-		t.Errorf("[TEST_ERROR] Handler returned wrong format body (got %v): %v",
-			string(recorder.Body.Bytes()), err.Error())
-	}
+	assert.Nil(err, "Handler returned wrong format body: "+string(recorder.Body.Bytes()))
 
 	// Location content test
 	locations := reqData.Location
-	if len(locations) != 1 {
-		t.Errorf("[TEST_ERROR] Handler returned wrong body content (length of Location): got %v want %v",
-			len(locations), 1)
-	}
+	assert.Equal(1, len(locations))
 
 	dimensions := locations[0].Polygon
 	dimensionsTest := [][2]int{
@@ -158,10 +139,7 @@ func TestGeneratePiFF(t *testing.T) {
 		{height, width},
 		{0, width},
 	}
-	if !reflect.DeepEqual(dimensionsTest, dimensions) {
-		t.Errorf("[TEST_ERROR] Handler returned wrong body content (content of Polygon): got %v want %v",
-			dimensions, dimensionsTest)
-	}
+	assert.True(reflect.DeepEqual(dimensionsTest, dimensions))
 
 	// delete the useless image
 	err = os.Remove(imagePath)
